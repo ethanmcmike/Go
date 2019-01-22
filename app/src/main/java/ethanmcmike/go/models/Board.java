@@ -3,14 +3,14 @@ package ethanmcmike.go.models;
 import java.util.Arrays;
 
 public class Board {
-	private int size;
+	final int size;
 	private char newStone;
 	
     private Intersection[][] board;
-    private char[][] old1 = null, old2;
+    private char[][] currTurn = null, lastTurn;
 	
 	private int[] captures;
-	private int[] oldCap1, oldCap2;
+	private int[] currCapt, lastCapt;
 	
 	public Board(int size) {
 		this.size = size;
@@ -19,8 +19,7 @@ public class Board {
 		for(int r = 0; r < size; r++)
 			for(int c = 0; c < size; c++)
 				board[r][c] = new Intersection();
-		old2 = toArray();
-		oldCap2 = new int[26];
+		lastTurn = toArray();
 	}
 	
 	public void print() {
@@ -39,35 +38,28 @@ public class Board {
 		if(!board[row][col].set(color)) return false;
 		newStone = color;
 		
-		if(!check(row-1, col))	//North
-			clear(row-1, col);
-		reset();
-		if(!check(row, col+1))	//East
-			clear(row, col+1);
-		reset();
-		if(!check(row+1, col))	//South
-			clear(row+1, col);
-		reset();
-		if(!check(row, col-1))	//West
-			clear(row, col-1);
+		if(!check(row-1, col)) clear(row-1, col);	//North
+		if(!check(row, col+1)) clear(row, col+1);	//East
+		if(!check(row+1, col)) clear(row+1, col);	//South
+		if(!check(row, col-1)) clear(row, col-1);	//West
 		reset();
 		
 		if(!check(row, col, color))
 			clear(row, col);
 		reset();
 		
-		char[][] temp = toArray();
-		if(Arrays.deepEquals(temp, old2)) {	//If(Ko) undo and return false
-			fromArray(old1);
-			captures = oldCap1.clone();
+		char[][] newTurn = toArray();
+		if(Arrays.deepEquals(newTurn, lastTurn)) {	//If(Ko) undo and return false
+			fromArray(currTurn);
+			captures = currCapt.clone();
 			return false;
 		} else {							//else save previous configs to test for Ko
-			if(old1 != null) {
-				old2 = old1.clone();
-				oldCap2 = oldCap1.clone();
+			if(currTurn != null) {
+				lastTurn = currTurn.clone();
+				lastCapt = currCapt.clone();
 			}
-			old1 = temp.clone();
-			oldCap1 = captures.clone();
+			currTurn = newTurn.clone();
+			currCapt = captures.clone();
 			return true;
 		}
 	}
@@ -80,11 +72,11 @@ public class Board {
 	 */
 	private boolean check(int row, int col, char color) {
 		if(row<0 || row>=size || col<0 || col>=size) return false;	//Dead if off the edge
-		char c = board[row][col].check();
-		if(c == '+') return true;									//Live if empty
-		else if(c == color)											//Check surrounding spaces if the same color
-			return check(row-1, col  , color) || check(row  , col+1, color) || check(row+1, col  , color) || check(row  , col-1, color);
-		else return false;											//Dead if already checked or other color
+		char c = board[row][col].check(color);
+		if(c == '+') return true;					//Live if empty
+		else if(c == color)							//Check surrounding spaces if the same color
+			return	check(row-1, col, color) || check(row, col+1, color) || check(row+1, col, color) || check(row, col-1, color);
+		else return false;							//Dead if already checked or other color
 	}
 	
 	/**
@@ -94,10 +86,10 @@ public class Board {
 	 * Otherwise is the same as check(int, int, char)
 	 */
 	private boolean check(int row, int col) {
-		if(row<0 || row>=size || col<0 || col>=size) return true;	//Don't care if off the edge
+		if(row<0 || row>=size || col<0 || col>=size) return true;			//Don't care if off the edge
 		char color = board[row][col].check();
-		if(color == '+' || newStone == color) return true;			//Don't care if empty or same color
-		return check(row-1, col  , color) || check(row  , col+1, color) || check(row+1, col  , color) || check(row  , col-1, color);
+		if(color == '+' || color == newStone || color >= 0x61) return true;	//Don't care if empty or same color or already checked
+		return	check(row-1, col, color) || check(row, col+1, color) || check(row+1, col, color) || check(row, col-1, color);	//Check each direction
 	}
 	
 	private void reset() {
@@ -156,16 +148,19 @@ public class Board {
 	}
 	
 	public boolean undo() {
-		if(old1 == null) return false;
+		if(currTurn == null) return false;
 		
-		fromArray(old2);
-		captures = oldCap2.clone();
+		fromArray(lastTurn);
+		captures = lastCapt.clone();
 		
-		old1 = null;
+		currTurn = null;
 		return true;
 	}
 	
 	public int getCaptures(char color) {
 		return captures[color - 0x41];
+	}
+	public int[] getCaptures() {
+		return captures;
 	}
 }
