@@ -1,6 +1,6 @@
 package ethanmcmike.go.models;
 
-public class Go {
+public class Console_Test_Main {
     public static void main(String[] args) {
         Board board = new Board(4);
 		
