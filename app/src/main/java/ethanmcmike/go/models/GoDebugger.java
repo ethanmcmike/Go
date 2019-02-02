@@ -1,4 +1,4 @@
-package ethanmcmike.go.models;
+package firstneuralnet.renderers;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 public class GoDebugger extends Stage {
     
     //Settings
+    public final String TITLE = "Go Debugger";
     public final int WIDTH = 640;
     public final int HEIGHT = 480;
 
@@ -63,6 +64,8 @@ public class GoDebugger extends Stage {
         setScene(scene);
         
         scene.setOnMouseClicked(onClick);
+        
+        setTitle(TITLE);
     }
 
     private void render(){
