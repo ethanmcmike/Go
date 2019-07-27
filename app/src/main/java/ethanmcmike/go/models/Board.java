@@ -10,11 +10,13 @@ public class Board {
     private char[][] currTurn = null, lastTurn;
 	
 	private int[] captures;
+	private int[] controlled;
 	private int[] currCapt, lastCapt;
 	
 	public Board(int size) {
 		this.size = size;
 		this.captures = new int[26];
+		this.controlled = new int[26];
 		board = new Intersection[size][size];
 		for(int r = 0; r < size; r++)
 			for(int c = 0; c < size; c++)
@@ -42,10 +44,9 @@ public class Board {
 		if(!check(row, col+1)) clear(row, col+1);	//East
 		if(!check(row+1, col)) clear(row+1, col);	//South
 		if(!check(row, col-1)) clear(row, col-1);	//West
-		reset();
+		if(!check(row, col, color)) return false;	//Self
 		
-		if(!check(row, col, color))
-			clear(row, col);
+		checkControl();
 		reset();
 		
 		char[][] newTurn = toArray();
@@ -73,7 +74,7 @@ public class Board {
 	private boolean check(int row, int col, char color) {
 		if(row<0 || row>=size || col<0 || col>=size) return false;	//Dead if off the edge
 		char c = board[row][col].check(color);
-		if(c == '+') return true;					//Live if empty
+		if(c == '@') return true;					//Live if empty
 		else if(c == color)							//Check surrounding spaces if the same color
 			return	check(row-1, col, color) || check(row, col+1, color) || check(row+1, col, color) || check(row, col-1, color);
 		else return false;							//Dead if already checked or other color
@@ -88,14 +89,15 @@ public class Board {
 	private boolean check(int row, int col) {
 		if(row<0 || row>=size || col<0 || col>=size) return true;			//Don't care if off the edge
 		char color = board[row][col].check();
-		if(color == '+' || color == newStone || color >= 0x61) return true;	//Don't care if empty or same color or already checked
+		if(color == '@' || color == newStone || color >= 0x61) return true;	//Don't care if empty or same color or already checked
+		board[row][col].setChecked();
 		return	check(row-1, col, color) || check(row, col+1, color) || check(row+1, col, color) || check(row, col-1, color);	//Check each direction
 	}
 	
 	private void reset() {
 		for(Intersection[] rows : board)
-			for(Intersection corner : rows)
-				corner.reset();
+			for(Intersection tile : rows)
+				tile.reset();
 	}
 	
 	private void clear(int row, int col, char color) {
@@ -123,6 +125,13 @@ public class Board {
 		clear(row, col+1, color);
 		clear(row-1, col, color);
 		clear(row, col-1, color);
+	}
+	
+	private void checkControl() {
+		for(int i = 0; i < size; i++)
+			for(int j = 0; j < size; j++) {
+				
+			}
 	}
 	
 	public int getSize() {
@@ -162,5 +171,12 @@ public class Board {
 	}
 	public int[] getCaptures() {
 		return captures;
+	}
+	
+	public int getControl(char color) {
+		return controlled[color - 0x41];
+	}
+	public int[] getControlled() {
+		return controlled;
 	}
 }
