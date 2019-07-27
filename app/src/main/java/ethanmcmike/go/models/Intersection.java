@@ -4,34 +4,32 @@ public class Intersection {
     private char ascii;
 	
 	public Intersection() {
-		ascii = '+';
+		this.clear();
 	}
 	
 	public boolean set(char color) {
-		if(ascii != '+' || color < 0x41 || color > 0x5A) return false;
+		if(color < 0x40 || color > 0x5A) return false;
 		ascii = color;
 		return true;
 	}
 	
 	public void clear() {
-		ascii = '+';
+		ascii = '@';
 	}
 	
 	public char check() {
-		if(ascii >= 0x41 && ascii <= 0x5A) {
-			char temp = ascii;
-			ascii += 0x20;
-			return temp;
-		} else
-			return ascii;
+		return ascii;
 	}
 	public char check(char color) {
 		if(ascii == color) {
-			char temp = ascii;
 			ascii += 0x20;
-			return temp;
+			return color;
 		} else
 			return ascii;
+	}
+	public void setChecked() {
+		if(ascii >= 0x40 && ascii <= 0x5A)
+			ascii += 0x20;
 	}
 	
 	public char getColor() {
@@ -40,10 +38,11 @@ public class Intersection {
 	}
 	
 	public char getChar() {
+		if(ascii == '@' || ascii == '`') return (char)(ascii - 0x20);
 		return ascii;
 	}
 	
 	void reset() {
-		if(ascii >= 0x61 && ascii <= 0x7A) ascii -= 0x20;
+		if(ascii >= 0x60 && ascii <= 0x7A) ascii -= 0x20;
 	}
 }
