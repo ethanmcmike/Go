@@ -6,18 +6,18 @@ import android.widget.Toast;
 public class Game {
 
     int size;
-    Board board;
+    MultiDimDriver board;
     public Player p1, p2, turn;
 
     public Game(){
         size = 19;
-        board = new Board(size);
+        board = new MultiDimDriver();
         init();
     }
 
     public Game(int size){
         this.size = size;
-        board = new Board(size);
+        board = new MultiDimDriver(size);
         init();
     }
 
@@ -29,7 +29,7 @@ public class Game {
 
     public void play(int x, int y){
 
-        boolean valid = board.set(y, x, turn.id);
+        boolean valid = board.place(new int[] {x, y}, turn.id);
 
         if(valid)
             incPlayer();
@@ -43,7 +43,7 @@ public class Game {
         turn = (turn == p1) ? p2 : p1;
     }
 
-    public Board getBoard(){
+    public MultiDimDriver getBoard(){
         return board;
     }
 
@@ -62,7 +62,7 @@ public class Game {
     }
 
     public int getScore(char id){
-        int score = board.getCaptures(id);
+        int score = board.getPrisoners(id);
         score += getLand(id);
         return score;
     }

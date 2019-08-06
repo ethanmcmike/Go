@@ -35,16 +35,6 @@ public class MultiDimDriver {
 	}
 	
 	/**
-	 * For backwards compatability
-	 * @param row Which row to place piece in
-	 * @param col Which column to place piece in
-	 * @param color What color to place
-	 * @return 
-	 */
-	boolean set(int row, int col, char color) {
-		return place(new int[]{row, col}, color);
-	}
-	/**
 	 * Place a new stone
 	 * @param loc Location to place new stone
 	 * @param color Color of new stone
@@ -95,7 +85,7 @@ public class MultiDimDriver {
 	private boolean check(int[] loc) {
 		if(!board.checkRange(loc)) return true;	//Don't care if off the edge
 		char color = board.getColor(loc);
-		if(color == ' ' || color == currPlayer || color >= 0x5A) return true;	//Don't care if empty or same color or already checked
+		if(color == ' ' || color == currPlayer || color > 0x5A) return true;	//Don't care if empty or same color or already checked
 		board.mark(color, loc);
 		for(int[] neighbor : board.adjacents(loc))	//If different color: check each direction
 			if(check(neighbor, color)) return true;	//Return true if live
@@ -135,13 +125,6 @@ public class MultiDimDriver {
 	}
 	
 	//private void checkTerritory()
-	
-	/**
-	 * For backwards compatability\
-	 */
-	public int getCaptures(char color) {
-		return getPrisoners(color);
-	}
 	public int getPrisoners(char color) {
 		return prisoners[color - 0x41];
 	}
@@ -172,7 +155,7 @@ public class MultiDimDriver {
 	 */
 	public void print() {
 		System.out.println(board.toString());
-		System.out.println("X:" + getPrisoners('X') + "  O:" + getPrisoners('O'));
+		System.out.println("X:" + getPrisoners('X') + "  O:" + getPrisoners('O') + "  Z:" + getPrisoners('Z'));
 		System.out.println();
 	}
 }
