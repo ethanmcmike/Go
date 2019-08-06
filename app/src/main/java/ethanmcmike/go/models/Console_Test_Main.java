@@ -1,8 +1,8 @@
 package ethanmcmike.go.models;
 
-import java.util.Arrays;
-import javafx.application.Application;
-import javafx.stage.Stage;
+//import java.util.Arrays;
+//import javafx.application.Application;
+//import javafx.stage.Stage;
 
 public class Console_Test_Main{// extends Application{
     public static void main(String[] args) {
@@ -17,15 +17,20 @@ public class Console_Test_Main{// extends Application{
 		board.place(new int[]{2, 2}, 'O');//	board.print();
 		
 		
+		board.place(new int[]{0, 0}, 'X');//	board.print();
 		board.place(new int[]{0, 1}, 'X');//	board.print();
 		board.place(new int[]{0, 2}, 'X');//	board.print();
-		board.place(new int[]{1, 0}, 'X');//	board.print();
-		board.place(new int[]{2, 0}, 'X');		board.print();
+		//board.place(new int[]{1, 0}, 'X');		board.print();
 		
+		board.place(new int[]{2, 0}, 'Z');		board.print();
 		
+		board.place(new int[]{1, 0}, 'O');		board.print();
 		board.undo();	board.print();
+		board.place(new int[]{1, 0}, 'X');		board.print();
 		board.undo();	board.print();
+		board.place(new int[]{1, 0}, 'Z');		board.print();
 		board.undo();	board.print();
+		
 
 //		int s = 5;
 //		int d = 4;
