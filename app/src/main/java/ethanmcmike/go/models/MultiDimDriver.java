@@ -69,7 +69,7 @@ public class MultiDimDriver {
 			
 			board.load(moves.get(turnNum - 1));
 			moves.remove(turnNum);
-			prisoners = captures.get(turnNum - 1);
+			prisoners = captures.get(turnNum - 1).clone();
 			captures.remove(turnNum);
 			return true;
 		} catch(Exception e) {}
@@ -154,6 +154,7 @@ public class MultiDimDriver {
 	 * Prints board to System.out
 	 */
 	public void print() {
+		System.out.println("Turn " + turnNum);
 		System.out.println(board.toString());
 		System.out.println("X:" + getPrisoners('X') + "  O:" + getPrisoners('O') + "  Z:" + getPrisoners('Z'));
 		System.out.println();
