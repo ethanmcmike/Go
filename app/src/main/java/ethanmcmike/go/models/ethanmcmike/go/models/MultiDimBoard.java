@@ -7,18 +7,20 @@ import java.util.Arrays;
  */
 public class MultiDimBoard {
     private char[] board;
-	private final int size, dim;
+	private final int size, dim, conN;
 	
-	public MultiDimBoard(int dimensions, int size) {
-		if(dimensions < 1) throw new ExceptionInInitializerError("dimensions must be positive");
+	public MultiDimBoard(int dimensions, int size, int conNum) {
+		if(dimensions < 1) throw new ExceptionInInitializerError("Dimensions must be positive.");
+		if(dimensions != 2 && conNum !=4) throw new ExceptionInInitializerError("In order to use alternate tessellations, you must use a 2-D board.");
 		this.dim = dimensions;
 		this.size = size;
+		this.conN = conNum;
 		this.board = new char[(int)Math.pow(this.size, dim)];
 		Arrays.fill(board, ' ');
 	}
-	public MultiDimBoard(int dimensions, int size, char[] array) {
-		this(dimensions, size);
-		if(board.length != array.length) throw new ExceptionInInitializerError("Array length does not match dimensions and size");
+	public MultiDimBoard(int dimensions, int size, int conNum, char[] array) {
+		this(dimensions, size, conNum);
+		if(board.length != array.length) throw new ExceptionInInitializerError("Array length does not match");
 		board = array.clone();
 	}
 	
@@ -104,13 +106,40 @@ public class MultiDimBoard {
 	 */
 	int[][] adjacents(int[] coordinates) {
 		if(coordinates.length != dim) throw new ArrayIndexOutOfBoundsException("Wrong number of coordinates");
-		int[][] points = new int[2*dim][dim];
-		for (int i = 0; i < dim; i++) {
-			points[i] = coordinates.clone();
-			points[i][i]--;
+		int[][] points;
+		
+		if(conN == 4) {
+			points = new int[2*dim][dim];
+			for(int i = 0; i < dim; i++) {
+				points[i] = coordinates.clone();
+				points[i][i]--;
+
+				points[i+dim] = coordinates.clone();
+				points[i+dim][i]++;
+			}
+		} else {
+			int row = coordinates[0];
+			int col = coordinates[1];
 			
-			points[i+dim] = coordinates.clone();
-			points[i+dim][i]++;
+			points = new int[conN][2];
+			
+			if(conN == 6) {
+				int[][] mods = {{-1,0},{1,0}, {0,-1},{0,1}, {-1,-1},{1,-1}};
+				for(int i = 0; i < mods.length; i++) {
+					points[i][0] = row + mods[i][0];
+					points[i][1] = col + (row%2==0 ? mods[i][1] : -mods[i][1]);
+				}
+			}
+			if(conN == 3) {
+				points[0][0] = row - 1;	//up
+				points[0][1] = col;
+				
+				points[1][0] = row + 1;	//down
+				points[1][1] = col;
+				
+				points[2][0] = row;		//right or left depending on position
+				points[2][1] = col + ((row+col)%2==0 ? 1:-1);
+			}
 		}
 		return points;
 	} 
@@ -140,15 +169,36 @@ public class MultiDimBoard {
 	
 	@Override
 	public String toString() {
-		int maxDim = dim - (dim%2 == 0 || dim == 1 ? 0 : 1);
-		return recursiveString(maxDim, new int[dim]);
+		if(conN == 4) {
+			int maxDim = dim - (dim%2 == 0 || dim == 1 ? 0 : 1);
+			return recursiveString(maxDim, new int[dim]);
+		}
+		
+		String temp = "";
+		if(conN == 6) {
+			for(int i = 0; i < size; i++) {
+				if(i%2==1) temp += " ";
+				for(int j = 0; j < size; j++)
+					temp += get(new int[] {i,j}) + " ";
+				temp += "\n";
+			}
+		} if(conN == 3) {
+			for(int i = 0; i < size; i++) {
+				for(int j = 0; j < size; j++) {
+					if((i+j)%2 == 0)	temp += " " + get(new int[] {i, j});
+					else				temp += get(new int[] {i, j}) + " ";
+				}
+				temp += "\n";
+			}
+		}
+		return temp;
 	}
 	private String recursiveString(int dim, int[] coordinates) {
 		if(dim < 0) return "" + get(coordinates);
-		
+
 		int nextDim = dim - 2;
 		if(nextDim == 0) nextDim = this.dim - (this.dim%2 == 0 ? 1 : 0);
-		
+
 		String temp = "";
 		for(int i = 0; i < size; i++) {
 			boolean even = dim%2 == 0;
