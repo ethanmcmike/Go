@@ -40,7 +40,7 @@ public class MultiDimDriver {
 	 * @param color Color of new stone
 	 * @return True if successful, false if invalid move
 	 */
-	boolean place(int[] loc, char color) {
+	public boolean place(int[] loc, char color) {
 		currPlayer = color;
 		if(!board.set(currPlayer, loc)) return false;
 		

@@ -48,12 +48,14 @@ public class Game {
     }
 
     public int getColor(char id){
-        if(id == 'A')
-            return Color.BLACK;
-        else if(id == 'B')
-            return Color.WHITE;
-
-        return Color.TRANSPARENT;
+		switch(id) {
+			case 'A':
+				return Color.BLACK;
+			case 'B':
+				return Color.WHITE;
+			default:
+				return Color.TRANSPARENT;
+		}
     }
 
     public void undo(){

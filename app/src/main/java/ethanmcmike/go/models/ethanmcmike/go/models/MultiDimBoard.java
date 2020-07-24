@@ -46,9 +46,10 @@ public class MultiDimBoard {
 	char get(int[] coordinates){
 		return board[getIndex(coordinates)];
 	}
-	char getColor(int[] coordinates){
+	public char getColor(int[] coordinates){
 		char temp = get(coordinates);
 		if(temp >= 0x60) temp -= 0x20;
+//		temp &= 0xDF;	//Cant use because it messes with the space characters
 		return temp;
 	}
 	char check(int[] coordinates, char color){

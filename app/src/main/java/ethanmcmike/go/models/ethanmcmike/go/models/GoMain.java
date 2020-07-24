@@ -1,5 +1,6 @@
 package firstneuralnet.renderers;
 
+import ethanmcmike.go.models.MultiDimDriver;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -12,7 +13,7 @@ public class GoMain extends Application{
     @Override
     public void start(Stage stage) throws Exception {
         
-        Board board = new Board(17);
+        MultiDimDriver board = new MultiDimDriver();
         
         GoDebugger debug = new GoDebugger(board);
         debug.show();
