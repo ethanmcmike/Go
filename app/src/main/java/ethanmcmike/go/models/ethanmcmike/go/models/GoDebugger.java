@@ -1,5 +1,6 @@
 package firstneuralnet.renderers;
 
+import ethanmcmike.go.models.MultiDimDriver;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -23,7 +24,7 @@ public class GoDebugger extends Stage {
     private static int LINE_WIDTH = 1;
 
     //Game
-    private Board board;
+    private MultiDimDriver board;
     private boolean turn;
 
     //Graphics
@@ -33,7 +34,7 @@ public class GoDebugger extends Stage {
     float tileSize, gridSize, stoneSize, indicatorSize;
     float gridStartX, gridStartY;
 
-    public GoDebugger(Board board){
+    public GoDebugger(MultiDimDriver board){
         this.board = board;
         
         initViews();
@@ -83,15 +84,11 @@ public class GoDebugger extends Stage {
         gc.translate(-gridSize/2f, -gridSize/2f);
         
         //Stones
-        char[][] tiles = board.toArray();
         
-        for(int i=0; i<board.getSize(); i++){
-            for(int j=0; j<board.getSize(); j++){
-                
-                char id = tiles[j][i];
-                
-                Color color = getColor(id);
-                
+        for(int i=0; i < boardSize; i++){
+            for(int j=0; j < boardSize; j++){
+				int[] tile = {i, j};
+                Color color = getColor(board.board.getColor(tile));
                 drawStone(color, i, j);
             }
         }
@@ -151,12 +148,14 @@ public class GoDebugger extends Stage {
     }
     
     private Color getColor(char id){
-        if(id == 'A')
-            return Color.WHITE;
-        else if(id == 'B')
-            return Color.BLACK;
-        else
-            return Color.TRANSPARENT;
+		switch (id) {
+			case 'A':
+				return Color.WHITE;
+			case 'B':
+				return Color.BLACK;
+			default:
+				return Color.TRANSPARENT;
+		}
     }
     
     EventHandler onClick = new EventHandler(){
@@ -166,13 +165,12 @@ public class GoDebugger extends Stage {
             double x = ((MouseEvent)event).getX();
             double y = ((MouseEvent)event).getY();
             
-            int posX = getPosX(x);
-            int posY = getPosY(y);
+			int[] pos = {getPosX(x), getPosY(y)};
             
             if(turn)
-                board.set(posY, posX, 'A');
+				board.place(pos, 'A');
             else
-                board.set(posY, posX, 'B');
+				board.place(pos, 'B');
             
             turn = !turn;
             

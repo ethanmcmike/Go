@@ -5,9 +5,11 @@ import android.widget.Toast;
 
 public class Game {
 
-    int size;
+    int size, playerNum;
     MultiDimDriver board;
-    public Player p1, p2, turn;
+	Color[] colors = {Color.BLACK, Color.WHITE, Color.RED, Color.GREEN, Color.BLUE};
+	public Player[] players;
+    public int turn;
 
     public Game(){
         size = 19;
@@ -22,25 +24,24 @@ public class Game {
     }
 
     public void init(){
-        p1 = new Player('A', Color.BLACK);
-        p2 = new Player('B', Color.WHITE);
-        turn = p1;
+		playerNum = 2;
+		for(int i = 0; i < playerNum; i++)
+			players[i] = new Player('A' + i, colors[i]);
+		
+        turn = 0;
     }
 
     public void play(int x, int y){
-
-        boolean valid = board.place(new int[] {x, y}, turn.id);
-
-        if(valid)
+        if(board.place(new int[] {x, y}, players[turn].id))
             incPlayer();
     }
 
     private void incPlayer(){
-        turn = (turn == p1) ? p2 : p1;
+        turn = (turn+1)%playerNum;
     }
 
     private void decPlayer(){
-        turn = (turn == p1) ? p2 : p1;
+        turn = (turn-1)%playerNum;
     }
 
     public MultiDimDriver getBoard(){
@@ -48,12 +49,10 @@ public class Game {
     }
 
     public int getColor(char id){
-        if(id == 'A')
-            return Color.BLACK;
-        else if(id == 'B')
-            return Color.WHITE;
-
-        return Color.TRANSPARENT;
+		if(id < 'A')
+			return Color.TRANSPARENT;
+		else
+			return players[id-'A'+1].color;
     }
 
     public void undo(){

@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * @author Jacob Kelsey
  */
 public class MultiDimDriver {
-    final int size, dimension;
+    final int size, dimension, conNum;//4=square, 3=hex, 6=tri
 	public MultiDimBoard board;
 	
 	private char currPlayer;
@@ -16,15 +16,19 @@ public class MultiDimDriver {
 	private ArrayList<int[]> captures;
 	
 	public MultiDimDriver() {
-		this(19, 2);
+		this(19, 2, 4);
 	}
 	public MultiDimDriver(int size) {
-		this(size, 2);
+		this(size, 2, 4);
 	}
 	public MultiDimDriver(int size, int dimensions) {
+		this(size, dimensions, 4);
+	}
+	public MultiDimDriver(int size, int dimensions, int conNum) {
 		this.size = size;
 		this.dimension = dimensions;
-		board = new MultiDimBoard(dimensions, size);
+		this.conNum = conNum;
+		board = new MultiDimBoard(dimensions, size, conNum);
 		
 		turnNum = 0;
 		territory = new int[26];
@@ -40,7 +44,7 @@ public class MultiDimDriver {
 	 * @param color Color of new stone
 	 * @return True if successful, false if invalid move
 	 */
-	boolean place(int[] loc, char color) {
+	public boolean place(int[] loc, char color) {
 		currPlayer = color;
 		if(!board.set(currPlayer, loc)) return false;
 		
