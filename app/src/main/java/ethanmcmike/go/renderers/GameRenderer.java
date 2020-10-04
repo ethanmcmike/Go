@@ -5,9 +5,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.ScaleGestureDetector;
 
-import ethanmcmike.go.models.Board;
 import ethanmcmike.go.models.Game;
-import ethanmcmike.go.models.Player;
+import ethanmcmike.go.models.MultiDimBoard;
+import ethanmcmike.go.models.MultiDimDriver;
 
 public class GameRenderer {
 
@@ -17,7 +17,8 @@ public class GameRenderer {
     private static int TEXT_SIZE = 20;
 
     private Game game;
-    private Board board;
+    private MultiDimDriver driver;
+    private MultiDimBoard board;
     private Paint paint;
 
     int width, height, boardSize;
@@ -27,7 +28,8 @@ public class GameRenderer {
 
     public GameRenderer(Game game){
         this.game = game;
-        this.board = game.getBoard();
+        driver = game.getDriver();
+        board = driver.board;
         paint = new Paint();
         paint.setTextSize(TEXT_SIZE);
     }
@@ -51,10 +53,16 @@ public class GameRenderer {
 
         canvas.translate(-gridSize/2f, -gridSize/2f);
         //Stones
-        char[][] tiles = board.toArray();
-        for(int i=0; i<board.getSize(); i++){
-            for(int j=0; j<board.getSize(); j++){
-                char id = tiles[j][i];
+
+        //Assuming 2D right now...
+        int size = driver.getSize();
+
+        char[][] tiles = new char[size][size];
+
+        for(int i=0; i<size; i++){
+            for(int j=0; j<size; j++){
+
+                char id = board.getColor(new int[]{i, j});
                 int color = game.getColor(id);
                 drawStone(color, i, j, canvas);
             }
@@ -63,7 +71,7 @@ public class GameRenderer {
         canvas.restore();
 
         //Turn indicator
-        int playerColor = game.turn.color;
+        int playerColor = Color.BLACK;      //TODO actually get correct color
 //            //Backdrop
 //            canvas.save();
 //            canvas.translate(width/2f, 0);
@@ -127,8 +135,8 @@ public class GameRenderer {
             marginSize = (width - boardSize) / 2f;
         }
 
-        tileSize = boardSize / board.getSize();
-        gridSize = tileSize * (board.getSize() - 1);
+        tileSize = boardSize / driver.getSize();
+        gridSize = tileSize * (driver.getSize() - 1);
         stoneSize = 0.4f * tileSize;        //Radius
         gridStartX = (width - gridSize)/2f;
         gridStartY = (height - gridSize)/2f;

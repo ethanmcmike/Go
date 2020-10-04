@@ -67,7 +67,7 @@ public class MultiDimDriver {
 	 * Undoes the last move
 	 * @return Whether or not the operation was successful
 	 */
-	boolean undo() {
+	boolean undo() {		//TODO fix negative turn
 		try {
 			turnNum--;
 			
@@ -155,7 +155,7 @@ public class MultiDimDriver {
 	}
 	
 	/**
-	 * Prints board to System.out
+	 * Prints driver to System.out
 	 */
 	public void print() {
 		System.out.println("Turn " + turnNum);

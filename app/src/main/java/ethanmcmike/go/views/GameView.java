@@ -1,19 +1,13 @@
 package ethanmcmike.go.views;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.view.View;
-import android.widget.TextView;
 
-import ethanmcmike.go.R;
 import ethanmcmike.go.activities.BoardActivity;
-import ethanmcmike.go.models.Board;
 import ethanmcmike.go.models.Game;
 import ethanmcmike.go.renderers.GameRenderer;
 
@@ -74,7 +68,7 @@ public class GameView extends View {
         int posX = renderer.getPosX(x);
         int posY = renderer.getPosY(y);
 
-        int size = game.getBoard().getSize();
+        int size = game.getDriver().getSize();
 
         if(posX>=0 && posX<size && posY>=0 && posY<size)
             game.play(posX, posY);
