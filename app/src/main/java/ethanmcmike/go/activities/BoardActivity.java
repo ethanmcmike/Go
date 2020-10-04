@@ -1,12 +1,12 @@
 package ethanmcmike.go.activities;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import ethanmcmike.go.R;
@@ -18,6 +18,7 @@ import ethanmcmike.go.views.GameView;
 public class BoardActivity extends Activity {
 
     public static Game game;
+    private Button settingsButton, undoButton;
     GameView gameView;
 
     TextView leftScore, rightScore;
@@ -43,6 +44,26 @@ public class BoardActivity extends Activity {
             players[i] = new Player((char)('A' + i), colors[i]);
         }
 
+        settingsButton = findViewById(R.id.settingsButton);
+        settingsButton.setOnClickListener(
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                }
+            }
+        );
+
+        undoButton = findViewById(R.id.undoButton);
+        undoButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        game.undo();
+                        view.update();
+                    }
+                }
+        );
+      
         game = new Game(19, players, tessellation);
 
         //Views
@@ -65,6 +86,8 @@ public class BoardActivity extends Activity {
         switch (event.getKeyCode()) {
             case KeyEvent.KEYCODE_MENU:
                 game.undo();
+                view.update();
+//                PopupMenu popup = new PopupMenu(this, view);
                 gameView.update();
                 System.out.println("UNDO");
 //                PopupMenu popup = new PopupMenu(this, gameView);
