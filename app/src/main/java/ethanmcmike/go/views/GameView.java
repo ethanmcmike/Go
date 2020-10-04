@@ -1,19 +1,13 @@
 package ethanmcmike.go.views;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.view.View;
-import android.widget.TextView;
 
-import ethanmcmike.go.R;
 import ethanmcmike.go.activities.BoardActivity;
-import ethanmcmike.go.models.Board;
 import ethanmcmike.go.models.Game;
 import ethanmcmike.go.renderers.GameRenderer;
 
