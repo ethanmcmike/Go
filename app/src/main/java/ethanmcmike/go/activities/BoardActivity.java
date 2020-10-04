@@ -1,20 +1,18 @@
 package ethanmcmike.go.activities;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import ethanmcmike.go.R;
 import ethanmcmike.go.models.Game;
+import ethanmcmike.go.models.Player;
+import ethanmcmike.go.models.Tessellation;
 import ethanmcmike.go.views.GameView;
 
 public class BoardActivity extends Activity {
@@ -32,8 +30,23 @@ public class BoardActivity extends Activity {
         setContentView(R.layout.main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        //New game
+
+        int numPlayers = 2;
+        int[] colors = {Color.BLACK, Color.WHITE, Color.RED, Color.GREEN, Color.BLUE};
+
+        Tessellation tess = Tessellation.SQUARE;
+
+        //Init players
+        Player[] players = new Player[]{
+                new Player('A', Color.BLACK),
+                new Player('B', Color.WHITE),
+                new Player('C', Color.RED),
+                new Player('D', Color.CYAN)
+        };
+
         if(game == null) {
-            game = new Game();
+            game = new Game(19, players, tess);
             System.out.println("NEW GAME");
         }
 
@@ -50,8 +63,8 @@ public class BoardActivity extends Activity {
     }
 
     public void update(){
-        leftScore.setText(String.valueOf(game.getScore(game.p1.id)));
-        rightScore.setText(String.valueOf(game.getScore(game.p2.id)));
+//        leftScore.setText(String.valueOf(game.getScore(game.p1.id)));
+//        rightScore.setText(String.valueOf(game.getScore(game.p2.id)));
     }
 
     @Override
@@ -75,7 +88,7 @@ public class BoardActivity extends Activity {
 
         switch(item.getItemId()){
             case R.id.game_menu_newGame:
-                game = new Game();
+//                game = new Game();
                 break;
 
             case R.id.game_menu_undo:
@@ -84,5 +97,10 @@ public class BoardActivity extends Activity {
         }
 
         return false;
+    }
+
+    public void OnUndo(View view){
+        game.undo();
+        this.view.update();
     }
 }

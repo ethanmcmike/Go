@@ -11,7 +11,7 @@ public class MultiDimBoard {
 	
 	public MultiDimBoard(int dimensions, int size, int conNum) {
 		if(dimensions < 1) throw new ExceptionInInitializerError("Dimensions must be positive.");
-		if(dimensions != 2 && conNum !=4) throw new ExceptionInInitializerError("In order to use alternate tessellations, you must use a 2-D board.");
+		if(dimensions != 2 && conNum !=4) throw new ExceptionInInitializerError("In order to use alternate tessellations, you must use a 2-D driver.");
 		this.dim = dimensions;
 		this.size = size;
 		this.conN = conNum;
@@ -25,7 +25,7 @@ public class MultiDimBoard {
 	}
 	
 //	Methods previously in the intersections class
-//	These are for the manipulation of individual tiles and pieces on the board
+//	These are for the manipulation of individual tiles and pieces on the driver
 //	============================================================================
 	private int getIndex(int[] coordinates) {
 		if(coordinates.length != dim) throw new ArrayIndexOutOfBoundsException("Wrong number of coordinates");
@@ -146,15 +146,15 @@ public class MultiDimBoard {
 //	End of intersection interactions============================================
 	
 	/**
-	 * Saves a copy of the current board array
-	 * @return  char[] of board
+	 * Saves a copy of the current driver array
+	 * @return  char[] of driver
 	 */
 	public char[] save() {
 		return board.clone();
 	}
 	/**
-	 * Loads a saved board
-	 * @param board The saved board to load
+	 * Loads a saved driver
+	 * @param board The saved driver to load
 	 * @return Whether or not the operation was successful
 	 */
 	boolean load(char[] board) {
