@@ -1,27 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    //Number of players
-    //Dimensions
-    //Tessellation
-    //Size
-    //Colors
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Players"/>
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:text="New Game"
+            android:onClick="onNewGame"/>
 
-        <Spinner
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:text="Settings"
+            android:onClick="onSettings"/>
+
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:text="Rules"
+            android:onClick="onRules"/>
 
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

@@ -1,8 +1,8 @@
 package ethanmcmike.go.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -18,7 +18,7 @@ import ethanmcmike.go.views.GameView;
 public class BoardActivity extends Activity {
 
     public static Game game;
-    GameView view;
+    GameView gameView;
 
     TextView leftScore, rightScore;
 
@@ -30,33 +30,25 @@ public class BoardActivity extends Activity {
         setContentView(R.layout.main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        //New game
+        //Game data
+        Intent intent = getIntent();
+        int numPlayers = intent.getIntExtra(NewGameActivity.EXTRA_PLAYERS, 2);
+        int dimensions = intent.getIntExtra(NewGameActivity.EXTRA_DIMENSIONS, 2);
+        Tessellation tessellation = Tessellation.valueOf(intent.getStringExtra(NewGameActivity.EXTRA_TESSELLATION));
+        int[] colors = intent.getIntArrayExtra(NewGameActivity.EXTRA_COLORS);
 
-        int numPlayers = 2;
-        int[] colors = {Color.BLACK, Color.WHITE, Color.RED, Color.GREEN, Color.BLUE};
+        Player[] players = new Player[numPlayers];
 
-        Tessellation tess = Tessellation.SQUARE;
-
-        //Init players
-        Player[] players = new Player[]{
-                new Player('A', Color.BLACK),
-                new Player('B', Color.WHITE),
-                new Player('C', Color.RED),
-                new Player('D', Color.CYAN)
-        };
-
-        if(game == null) {
-            game = new Game(19, players, tess);
-            System.out.println("NEW GAME");
+        for(int i=0; i<numPlayers; i++){
+            players[i] = new Player((char)('A' + i), colors[i]);
         }
 
-        init();
-    }
+        game = new Game(19, players, tessellation);
 
-    private void init(){
-        view = findViewById(R.id.boardView);
-        view.setGame(game);
-        view.setActivity(this);
+        //Views
+        gameView = findViewById(R.id.boardView);
+        gameView.setGame(game);
+        gameView.setActivity(this);
 
         leftScore = findViewById(R.id.left_score);
         rightScore = findViewById(R.id.right_score);
@@ -73,9 +65,9 @@ public class BoardActivity extends Activity {
         switch (event.getKeyCode()) {
             case KeyEvent.KEYCODE_MENU:
                 game.undo();
-                view.update();
+                gameView.update();
                 System.out.println("UNDO");
-//                PopupMenu popup = new PopupMenu(this, view);
+//                PopupMenu popup = new PopupMenu(this, gameView);
 //                getMenuInflater().inflate(R.menu.game_menu, popup.getMenu());
                 break;
         }
@@ -101,6 +93,6 @@ public class BoardActivity extends Activity {
 
     public void OnUndo(View view){
         game.undo();
-        this.view.update();
+        this.gameView.update();
     }
 }
