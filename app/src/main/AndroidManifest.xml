@@ -11,6 +11,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <activity android:name=".activities.MainMenuActivity">
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN"/>
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".activities.NewGameActivity"/>
+
+        <activity android:name=".activities.BoardActivity"/>
+      
         <activity android:name=".activities.GLBoardActivity">
             <!--<intent-filter>-->
                 <!--<category android:name="android.intent.category.LAUNCHER"/>-->
@@ -18,12 +29,6 @@
             <!--</intent-filter>-->
         </activity>
 
-        <activity android:name=".activities.BoardActivity">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER"/>
-                <action android:name="android.intent.action.MAIN"/>
-            </intent-filter>
-        </activity>
-
     </application>
+
 </manifest>

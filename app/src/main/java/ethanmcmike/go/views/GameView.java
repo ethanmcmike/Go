@@ -68,7 +68,7 @@ public class GameView extends View {
         int posX = renderer.getPosX(x);
         int posY = renderer.getPosY(y);
 
-        int size = game.getBoard().getSize();
+        int size = game.getDriver().getSize();
 
         if(posX>=0 && posX<size && posY>=0 && posY<size)
             game.play(posX, posY);

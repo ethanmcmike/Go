@@ -11,13 +11,15 @@ import android.widget.TextView;
 
 import ethanmcmike.go.R;
 import ethanmcmike.go.models.Game;
+import ethanmcmike.go.models.Player;
+import ethanmcmike.go.models.Tessellation;
 import ethanmcmike.go.views.GameView;
 
 public class BoardActivity extends Activity {
 
     public static Game game;
-    private GameView view;
     private Button settingsButton, undoButton;
+    GameView gameView;
 
     TextView leftScore, rightScore;
 
@@ -29,9 +31,17 @@ public class BoardActivity extends Activity {
         setContentView(R.layout.main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        if(game == null) {
-            game = new Game();
-            System.out.println("NEW GAME");
+        //Game data
+        Intent intent = getIntent();
+        int numPlayers = intent.getIntExtra(NewGameActivity.EXTRA_PLAYERS, 2);
+        int dimensions = intent.getIntExtra(NewGameActivity.EXTRA_DIMENSIONS, 2);
+        Tessellation tessellation = Tessellation.valueOf(intent.getStringExtra(NewGameActivity.EXTRA_TESSELLATION));
+        int[] colors = intent.getIntArrayExtra(NewGameActivity.EXTRA_COLORS);
+
+        Player[] players = new Player[numPlayers];
+
+        for(int i=0; i<numPlayers; i++){
+            players[i] = new Player((char)('A' + i), colors[i]);
         }
 
         settingsButton = findViewById(R.id.settingsButton);
@@ -53,22 +63,21 @@ public class BoardActivity extends Activity {
                     }
                 }
         );
+      
+        game = new Game(19, players, tessellation);
 
-        init();
-    }
-
-    private void init(){
-        view = findViewById(R.id.boardView);
-        view.setGame(game);
-        view.setActivity(this);
+        //Views
+        gameView = findViewById(R.id.boardView);
+        gameView.setGame(game);
+        gameView.setActivity(this);
 
         leftScore = findViewById(R.id.left_score);
         rightScore = findViewById(R.id.right_score);
     }
 
     public void update(){
-        leftScore.setText(String.valueOf(game.getScore(game.p1.id)));
-        rightScore.setText(String.valueOf(game.getScore(game.p2.id)));
+//        leftScore.setText(String.valueOf(game.getScore(game.p1.id)));
+//        rightScore.setText(String.valueOf(game.getScore(game.p2.id)));
     }
 
     @Override
@@ -79,6 +88,9 @@ public class BoardActivity extends Activity {
                 game.undo();
                 view.update();
 //                PopupMenu popup = new PopupMenu(this, view);
+                gameView.update();
+                System.out.println("UNDO");
+//                PopupMenu popup = new PopupMenu(this, gameView);
 //                getMenuInflater().inflate(R.menu.game_menu, popup.getMenu());
                 break;
         }
@@ -91,7 +103,7 @@ public class BoardActivity extends Activity {
 
         switch(item.getItemId()){
             case R.id.game_menu_newGame:
-                game = new Game();
+//                game = new Game();
                 break;
 
             case R.id.game_menu_undo:
@@ -100,5 +112,10 @@ public class BoardActivity extends Activity {
         }
 
         return false;
+    }
+
+    public void OnUndo(View view){
+        game.undo();
+        this.gameView.update();
     }
 }

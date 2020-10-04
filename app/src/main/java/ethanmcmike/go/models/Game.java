@@ -1,77 +1,63 @@
 package ethanmcmike.go.models;
 
 import android.graphics.Color;
-import android.widget.Toast;
 
 public class Game {
 
-    int size;
-    Board board;
-    public Player p1, p2, turn;
+    int size, playerNum;
+    public Tessellation tessellation;
+    MultiDimDriver driver;
+	public Player[] players;
+    public int turn;
 
-    public Game(){
-        size = 19;
-        board = new Board(size);
-        init();
-    }
+    public Game(int size, Player[] players, Tessellation tessellation){
 
-    public Game(int size){
         this.size = size;
-        board = new Board(size);
-        init();
-    }
+        playerNum = players.length;
+        this.players = players;
+        this.tessellation = tessellation;
 
-    public void init(){
-        p1 = new Player('A', Color.BLACK);
-        p2 = new Player('B', Color.WHITE);
-        turn = p1;
+        driver = new MultiDimDriver(size, 2, tessellation.id);  //TODO just send enum
+
+        turn = 0;
     }
 
     public void play(int x, int y){
-
-        boolean valid = board.set(y, x, turn.id);
-
-        if(valid)
+        if(driver.place(new int[] {x, y}, players[turn].id))
             incPlayer();
     }
 
     private void incPlayer(){
-        turn = (turn == p1) ? p2 : p1;
+        turn = (turn+1)%playerNum;
     }
 
     private void decPlayer(){
-        turn = (turn == p1) ? p2 : p1;
+        turn = ((turn-1)%playerNum + playerNum) % playerNum;
     }
 
-    public Board getBoard(){
-        return board;
+    public MultiDimDriver getDriver(){
+        return driver;
     }
 
     public int getColor(char id){
-        if(id == 'A')
-            return Color.BLACK;
-        else if(id == 'B')
-            return Color.WHITE;
-
-        return Color.TRANSPARENT;
+		if(id < 'A')
+			return Color.TRANSPARENT;
+		else
+			return players[id-'A'].color;
     }
 
     public void undo(){
-        if(board.undo())
+        if(driver.undo())
             decPlayer();
     }
 
     public int getScore(char id){
-        int score = board.getCaptures(id);
+        int score = driver.getPrisoners(id);
         score += getLand(id);
         return score;
     }
 
     public int getLand(char id){
         return 0;
-    }
-
-    public void updatePlayers(){
-
     }
 }
