@@ -1,6 +1,7 @@
 package ethanmcmike.go.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -59,7 +60,7 @@ public class BoardActivity extends Activity {
                     @Override
                     public void onClick(View v) {
                         game.undo();
-                        view.update();
+                        gameView.update();
                     }
                 }
         );
@@ -86,7 +87,7 @@ public class BoardActivity extends Activity {
         switch (event.getKeyCode()) {
             case KeyEvent.KEYCODE_MENU:
                 game.undo();
-                view.update();
+                gameView.update();
 //                PopupMenu popup = new PopupMenu(this, view);
                 gameView.update();
                 System.out.println("UNDO");
