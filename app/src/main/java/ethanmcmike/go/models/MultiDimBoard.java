@@ -168,6 +168,9 @@ public class MultiDimBoard {
 		return false;
 	}
 	
+	//TODO square tessellation is printing transposed compared to triangle and hexagon
+	//I don't know which is wrong. Will have to test vs actual graphics
+	
 	@Override
 	public String toString() {
 		if(tessellation == Tessellation.SQUARE) {
