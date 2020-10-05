@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/game_menu_undo" android:title="Undo"/>
-    <item android:id="@+id/game_menu_newGame" android:title="NewGame"/>
+    <item android:id="@+id/game_menu_undo"
+        android:title="Undo"
+        android:icon="@drawable/ic_undo"
+        app:showAsAction="always" />
+
+    <item android:id="@+id/game_menu_newGame"
+        android:title="NewGame"/>
+
+    <item android:id="@+id/game_menu_settings"
+        android:title="Settings"
+        android:icon="@drawable/ic_settings"
+        app:showAsAction="always"/>
 
 </menu>

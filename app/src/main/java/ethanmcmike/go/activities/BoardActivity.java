@@ -1,10 +1,11 @@
 package ethanmcmike.go.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -16,21 +17,23 @@ import ethanmcmike.go.models.Player;
 import ethanmcmike.go.models.Tessellation;
 import ethanmcmike.go.views.GameView;
 
-public class BoardActivity extends Activity {
+public class BoardActivity extends AppCompatActivity {
 
-    public static Game game;
+    //Models
+    private Game game;
+
+    //Views
+    private GameView gameView;
+    private TextView leftScore, rightScore;
     private Button settingsButton, undoButton;
-    GameView gameView;
-
-    TextView leftScore, rightScore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        System.out.println("NEW ACTIVITY");
         setContentView(R.layout.main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         //Game data
         Intent intent = getIntent();
@@ -44,26 +47,6 @@ public class BoardActivity extends Activity {
         for(int i=0; i<numPlayers; i++){
             players[i] = new Player((char)('A' + i), colors[i]);
         }
-
-        settingsButton = findViewById(R.id.settingsButton);
-        settingsButton.setOnClickListener(
-            new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                }
-            }
-        );
-
-        undoButton = findViewById(R.id.undoButton);
-        undoButton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        game.undo();
-                        gameView.update();
-                    }
-                }
-        );
       
         game = new Game(19, players, tessellation);
 
@@ -71,13 +54,13 @@ public class BoardActivity extends Activity {
         gameView = findViewById(R.id.boardView);
         gameView.setGame(game);
         gameView.setActivity(this);
-
-        leftScore = findViewById(R.id.left_score);
-        rightScore = findViewById(R.id.right_score);
     }
 
     public void update(){
-//        leftScore.setText(String.valueOf(game.getScore(game.p1.id)));
+
+        int p1 = game.getScore(game.players[0]);
+
+//        leftScore.setText(String.valueOf(driver));
 //        rightScore.setText(String.valueOf(game.getScore(game.p2.id)));
     }
 
@@ -100,23 +83,45 @@ public class BoardActivity extends Activity {
     }
 
     @Override
-    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+    public void onBackPressed() {
+        onSettings();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.game_menu, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
         switch(item.getItemId()){
             case R.id.game_menu_newGame:
-//                game = new Game();
+                onNewGame();
                 break;
 
             case R.id.game_menu_undo:
-                game.undo();
+                onUndo();
                 break;
         }
 
         return false;
     }
 
-    public void OnUndo(View view){
+    public void onUndo(){
         game.undo();
-        this.gameView.update();
+        gameView.update();
+    }
+
+    public void onNewGame(){
+        gameView.update();
+    }
+
+    public void onSettings(){
+//        Intent intent = new Intent(this, SettingsActivity.class);
+//        startActivity(intent);
     }
 }
