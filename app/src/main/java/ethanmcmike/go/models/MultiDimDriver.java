@@ -214,7 +214,7 @@ public class MultiDimDriver {
 	public void print() {
 		System.out.println("Turn " + turnNum);
 		System.out.println(board.toString());
-		System.out.println("X:" + getPrisoners('X') + "  O:" + getPrisoners('O') + "  Z:" + getPrisoners('Z'));
+		System.out.println("A:" + getPrisoners('A') + "  B:" + getPrisoners('B'));
 		System.out.println();
 	}
 }
