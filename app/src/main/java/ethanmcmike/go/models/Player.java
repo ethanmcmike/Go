@@ -2,7 +2,7 @@ package ethanmcmike.go.models;
 
 public class Player {
 
-    public char id;
+    public final char id;
     public int color;
 
     public Player(char id, int color){

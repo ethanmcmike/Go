@@ -7,19 +7,20 @@ import java.util.Arrays;
  */
 public class MultiDimBoard {
     private char[] board;
-	private final int size, dim, conN;
+	private final int size, dim;
+	private Tessellation tessellation;
 	
-	public MultiDimBoard(int dimensions, int size, int conNum) {
+	public MultiDimBoard(int dimensions, int size, Tessellation tess) {
 		if(dimensions < 1) throw new ExceptionInInitializerError("Dimensions must be positive.");
-		if(dimensions != 2 && conNum !=4) throw new ExceptionInInitializerError("In order to use alternate tessellations, you must use a 2-D driver.");
+		if(dimensions != 2 && tess != Tessellation.SQUARE) throw new ExceptionInInitializerError("In order to use alternate tessellations, you must use a 2-D driver.");
 		this.dim = dimensions;
 		this.size = size;
-		this.conN = conNum;
+		this.tessellation = tess;
 		this.board = new char[(int)Math.pow(this.size, dim)];
 		Arrays.fill(board, ' ');
 	}
-	public MultiDimBoard(int dimensions, int size, int conNum, char[] array) {
-		this(dimensions, size, conNum);
+	public MultiDimBoard(int dimensions, int size, Tessellation tess, char[] array) {
+		this(dimensions, size, tess);
 		if(board.length != array.length) throw new ExceptionInInitializerError("Array length does not match");
 		board = array.clone();
 	}
@@ -48,7 +49,7 @@ public class MultiDimBoard {
 	char get(int[] coordinates){
 		return board[getIndex(coordinates)];
 	}
-	public char getColor(int[] coordinates){
+	char getColor(int[] coordinates){
 		char temp = get(coordinates);
 		if(temp >= 0x60) temp -= 0x20;
 //		temp &= 0xDF;	//Cant use because it messes with the space characters
@@ -108,7 +109,7 @@ public class MultiDimBoard {
 		if(coordinates.length != dim) throw new ArrayIndexOutOfBoundsException("Wrong number of coordinates");
 		int[][] points;
 		
-		if(conN == 4) {
+		if(tessellation == Tessellation.SQUARE) {
 			points = new int[2*dim][dim];
 			for(int i = 0; i < dim; i++) {
 				points[i] = coordinates.clone();
@@ -121,16 +122,16 @@ public class MultiDimBoard {
 			int row = coordinates[0];
 			int col = coordinates[1];
 			
-			points = new int[conN][2];
+			points = new int[tessellation.id][2];
 			
-			if(conN == 6) {
+			if(tessellation == Tessellation.TRIANGLE) {
 				int[][] mods = {{-1,0},{1,0}, {0,-1},{0,1}, {-1,-1},{1,-1}};
 				for(int i = 0; i < mods.length; i++) {
 					points[i][0] = row + mods[i][0];
 					points[i][1] = col + (row%2==0 ? mods[i][1] : -mods[i][1]);
 				}
 			}
-			if(conN == 3) {
+			if(tessellation == Tessellation.HEXAGON) {
 				points[0][0] = row - 1;	//up
 				points[0][1] = col;
 				
@@ -169,20 +170,20 @@ public class MultiDimBoard {
 	
 	@Override
 	public String toString() {
-		if(conN == 4) {
+		if(tessellation == Tessellation.SQUARE) {
 			int maxDim = dim - (dim%2 == 0 || dim == 1 ? 0 : 1);
 			return recursiveString(maxDim, new int[dim]);
 		}
 		
 		String temp = "";
-		if(conN == 6) {
+		if(tessellation == Tessellation.TRIANGLE) {
 			for(int i = 0; i < size; i++) {
 				if(i%2==1) temp += " ";
 				for(int j = 0; j < size; j++)
 					temp += get(new int[] {i,j}) + " ";
 				temp += "\n";
 			}
-		} if(conN == 3) {
+		} if(tessellation == Tessellation.HEXAGON) {
 			for(int i = 0; i < size; i++) {
 				for(int j = 0; j < size; j++) {
 					if((i+j)%2 == 0)	temp += " " + get(new int[] {i, j});

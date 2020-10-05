@@ -6,34 +6,55 @@ import java.util.ArrayList;
  * @author Jacob Kelsey
  */
 public class MultiDimDriver {
-    final int size, dimension, conNum;//4=square, 3=hex, 6=tri
-	public MultiDimBoard board;
+    public final int size, dimension, playerCount;
+	public final Tessellation tessellation;
+	public final Player[] players;
+	private MultiDimBoard board;
 	
-	private char currPlayer;
+	private Player currPlayer;
 	private int turnNum;
 	private int[] territory, area, prisoners;
 	private ArrayList<char[]> moves;
 	private ArrayList<int[]> captures;
 	
-	public MultiDimDriver() {
-		this(19, 2, 4);
-	}
-	public MultiDimDriver(int size) {
-		this(size, 2, 4);
-	}
-	public MultiDimDriver(int size, int dimensions) {
-		this(size, dimensions, 4);
-	}
-	public MultiDimDriver(int size, int dimensions, int conNum) {
+	/**
+	 * Constructor for any-D board with square tessellation only
+	 * @param players		List of players participating in this game
+	 * @param size			Number of intersections in each row
+	 * @param dimensions	Number of dimensions, 2-D by default
+	 */
+	public MultiDimDriver(Player[] players, int size, int dimensions) {
+		this.players = players;
+		this.playerCount = players.length;
 		this.size = size;
 		this.dimension = dimensions;
-		this.conNum = conNum;
-		board = new MultiDimBoard(dimensions, size, conNum);
+		this.tessellation = Tessellation.SQUARE;
 		
+		board = new MultiDimBoard(dimensions, size, Tessellation.SQUARE);
+		init();
+	}
+	/**
+	 * Constructor for a 2-D board with square, triangle, or hexagon tessellation
+	 * @param players	List of players participating in this game
+	 * @param size		Number of intersections in each row and column
+	 * @param tess		Tessellation of the game board, square by default
+	 */
+	public MultiDimDriver(Player[] players, int size, Tessellation tess) {
+		this.players = players;
+		this.playerCount = players.length;
+		this.size = size;
+		this.dimension = 2;
+		this.tessellation = tess;
+		
+		board = new MultiDimBoard(2, size, tess);
+		init();
+	}
+	
+	private void init() {
 		turnNum = 0;
-		territory = new int[26];
-		area = new int[26];
-		prisoners = new int[26];
+		territory = new int[playerCount];
+		area = new int[playerCount];
+		prisoners = new int[playerCount];
 		moves = new ArrayList();
 		captures = new ArrayList();
 	}
@@ -44,14 +65,14 @@ public class MultiDimDriver {
 	 * @param color Color of new stone
 	 * @return True if successful, false if invalid move
 	 */
-	public boolean place(int[] loc, char color) {
-		currPlayer = color;
-		if(!board.set(currPlayer, loc)) return false;
+	public boolean place(int[] loc) {
+		currPlayer = players[turnNum%playerCount];
+		if(!board.set(currPlayer.id, loc)) return false;
 		
 		for(int[] neighbor: board.adjacents(loc))
 			if(!MultiDimDriver.this.check(neighbor)) remove(neighbor);
 		board.demarkAll();
-		if(!check(loc, currPlayer)) {
+		if(!check(loc, currPlayer.id)) {
 			board.clear(loc);
 			board.demarkAll();
 			return false;
@@ -60,24 +81,25 @@ public class MultiDimDriver {
 		
 		moves.add(board.save());
 		captures.add(prisoners.clone());
+		
+		//Counts up after successful placing
 		turnNum++;
 		return true;
 	}
 	/**
 	 * Undoes the last move
-	 * @return Whether or not the operation was successful
+	 * @return Boolean whether or not the operation was successful
 	 */
-	boolean undo() {		//TODO fix negative turn
-		try {
-			turnNum--;
-			
-			board.load(moves.get(turnNum - 1));
-			moves.remove(turnNum);
-			prisoners = captures.get(turnNum - 1).clone();
-			captures.remove(turnNum);
-			return true;
-		} catch(Exception e) {}
-		return false;
+	public boolean undo() {
+		if (turnNum < 1) return false;
+		//Counts down before undo
+		turnNum--;
+
+		board.load(moves.get(turnNum - 1));
+		moves.remove(turnNum);
+		prisoners = captures.get(turnNum - 1).clone();
+		captures.remove(turnNum);
+		return true;
 	}
 	
 	/**
@@ -89,7 +111,7 @@ public class MultiDimDriver {
 	private boolean check(int[] loc) {
 		if(!board.checkRange(loc)) return true;	//Don't care if off the edge
 		char color = board.getColor(loc);
-		if(color == ' ' || color == currPlayer || color > 0x5A) return true;	//Don't care if empty or same color or already checked
+		if(color == ' ' || color == currPlayer.id || color > 0x5A) return true;	//Don't care if empty, same color, or already checked
 		board.mark(color, loc);
 		for(int[] neighbor : board.adjacents(loc))	//If different color: check each direction
 			if(check(neighbor, color)) return true;	//Return true if live
@@ -115,7 +137,7 @@ public class MultiDimDriver {
 		if(!board.checkRange(loc)) return;
 		char color = board.getColor(loc);
 		board.delete(loc);
-		prisoners[currPlayer - 0x41]++;
+		prisoners[currPlayer.id - 0x41]++;
 		for(int[] neighbor : board.adjacents(loc))
 			remove(neighbor, color);
 	}
@@ -123,35 +145,67 @@ public class MultiDimDriver {
 		if(!board.checkRange(loc)) return;
 		if(board.getColor(loc) != color) return;
 		board.delete(loc);
-		prisoners[currPlayer - 0x41]++;
+		prisoners[currPlayer.id - 0x41]++;
 		for(int[] neighbor : board.adjacents(loc))
 			remove(neighbor, color);
 	}
 	
 	//private void checkTerritory()
+	/**
+	 * Retrieve the number of prisoners a given player has captured
+	 * @param color	The char color of player to check
+	 * @return		int number of captured stones
+	 */
 	public int getPrisoners(char color) {
 		return prisoners[color - 0x41];
 	}
+	/**
+	 * Retrieve all captured scores
+	 * @return int[] of all players' number of captured stones
+	 */
 	public int[] getPrisoners() {
 		return prisoners;
 	}
 	
+	/**
+	 * Not implemented
+	 * @param color
+	 * @return 
+	 */
 	public int getTerritory(char color) {
 		return territory[color - 0x41];
 	}
+	/**
+	 * Not implemented
+	 * @return 
+	 */
 	public int[] getTerritory() {
 		return territory;
 	}
 	
+	/**
+	 * Not implemented
+	 * @param color
+	 * @return 
+	 */
 	public int getArea(char color) {
 		return area[color - 0x41];
 	}
+	/**
+	 * Not implemented
+	 * @return 
+	 */
 	public int[] getArea() {
 		return area;
 	}
 	
-	public int getSize() {
-		return size;
+	/**
+	 * Returns the character representation of the stone on given intersection
+	 * @param coords	n-length int array where n is the number of dimensions
+	 * @return			char of color
+	 */
+	public char getColor(int[] coords) {
+		return board.getColor(coords);
 	}
 	
 	/**
