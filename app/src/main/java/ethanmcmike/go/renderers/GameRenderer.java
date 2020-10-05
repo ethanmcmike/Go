@@ -8,6 +8,7 @@ import android.view.ScaleGestureDetector;
 import ethanmcmike.go.models.Game;
 import ethanmcmike.go.models.MultiDimBoard;
 import ethanmcmike.go.models.MultiDimDriver;
+import ethanmcmike.go.models.Player;
 
 public class GameRenderer {
 
@@ -57,21 +58,21 @@ public class GameRenderer {
         //Assuming 2D right now...
         int size = driver.getSize();
 
-        char[][] tiles = new char[size][size];
-
         for(int i=0; i<size; i++){
             for(int j=0; j<size; j++){
 
-                char id = board.getColor(new int[]{i, j});
-                int color = game.getColor(id);
-                drawStone(color, i, j, canvas);
+                Player player = game.get(i, j);
+
+                if(player != null) {
+                    drawStone(player.color, i, j, canvas);
+                }
             }
         }
 
         canvas.restore();
 
         //Turn indicator
-        int playerColor = Color.BLACK;      //TODO actually get correct color
+        int playerColor = game.getCurrentPlayer().color;
 //            //Backdrop
 //            canvas.save();
 //            canvas.translate(width/2f, 0);
